@@ -1,0 +1,23 @@
+
+#Setting up Virtual ENV and Activating it
+python -m venv venv
+venv\Scripts\activate
+pip install django
+django-admin startproject SelfAccounting .
+
+
+
+#must run for requirement
+pip freeze > requirements.txt
+pip install -r requirements.txt
+
+
+#to setup up new app
+python manage.py startapp myapp
+
+#before you run server for the first time
+python manage.py makemigrations: Creates migration files based on model changes.
+python manage.py migrate: Applies the migrations to your database.
+
+#to create super user
+python manage.py createsuperuser
