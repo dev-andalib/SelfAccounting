@@ -19,5 +19,7 @@ python manage.py startapp myapp
 python manage.py makemigrations: Creates migration files based on model changes.
 python manage.py migrate: Applies the migrations to your database.
 
+
+
 #to create super user
 python manage.py createsuperuser
