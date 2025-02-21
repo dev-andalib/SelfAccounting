@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect
-from .forms import CustomUserCreationForm, OTPVerificationForm
+from .forms import CustomUserCreationForm, OTPVerificationForm, ForgetPasswordForm, SetNewPasswordForm
 from django.contrib.auth.forms import  AuthenticationForm
 from django.contrib.auth import authenticate
-import random, smtplib
+from .models import CustomUser
+import random 
 from django.core.mail import send_mail
 from django.contrib import messages
-
 
 
 
@@ -62,42 +62,30 @@ def otpverification(request):
         form = OTPVerificationForm(request.POST)
         if form.is_valid():
             otpform = form.cleaned_data['otp']
-            stored_otp = request.session.get('otp')  # Retrieve OTP from session
+            stored_otp = request.session.get('otp') 
 
-            if stored_otp and otpform == stored_otp:  # Compare OTPs
-                # OTP is valid
-                del request.session['otp']  # Clear OTP from session
-
-                # Retrieve the signup form data from the session
+            if stored_otp and otpform == stored_otp:
+                del request.session['otp']  
                 signup_form_data = request.session.get('signup_form_data')
                 if signup_form_data:
-                    # Create a form instance with the retrieved data
                     signup_form = CustomUserCreationForm(signup_form_data)
                     if signup_form.is_valid():
-                        # Save the user to the database
-                        user = signup_form.save()
-                        # Optionally, you can log the user in here if needed
-                        # from django.contrib.auth import login
-                        # login(request, user)
-
-                        # Clear the signup form data from the session
+                        signup_form.save()
                         del request.session['signup_form_data']
-
-                        # Redirect to login page after successful verification
                         return redirect("login")
                     else:
-                        # Handle the case where the form is not valid
                         form.add_error(None, 'There was an error processing your signup data.')
                 else:
-                    # Handle the case where the signup form data is not found in the session
                     form.add_error(None, 'Signup data not found. Please try signing up again.')
             else:
-                # OTP is invalid
                 form.add_error('otp', 'Invalid OTP. Please try again.')
     else:
         form = OTPVerificationForm()
-
     return render(request, "verifyOTP.html", {'form': form})
+
+
+
+
 
 def signup(request):
     if request.method == "POST":
@@ -106,12 +94,8 @@ def signup(request):
             otp = generate_otp()
             email = form.cleaned_data['email']
             send_otp_email(email, otp)
-
-            # Store OTP and form data in session for verification
             request.session['otp'] = otp
             request.session['signup_form_data'] = request.POST
-
-            # Redirect to OTP verification page
             return redirect("otpverification")
     else:
         form = CustomUserCreationForm()
@@ -121,5 +105,59 @@ def signup(request):
 
 
 
+from django.utils.timezone import now
+from datetime import timedelta
+
 def forgetPassword(request):
-    return render(request, )
+    if request.method == "POST":
+        if 'email' in request.POST:
+            form = ForgetPasswordForm(request.POST)
+            if form.is_valid():
+                email = form.cleaned_data['email']
+                otp = generate_otp()
+                send_otp_email(email, otp)
+                request.session['forgot_email'] = email
+                request.session['otp'] = otp
+                request.session.set_expiry(7 * 60)  # Set expiry time to 7 minutes
+                return redirect("forgetPassword")
+            messages.error(request, "Invalid email address. Please try again.")
+        
+        elif 'otp' in request.POST and 'forgot_email' in request.session:
+            form = OTPVerificationForm(request.POST)
+            if form.is_valid():
+                otpform = form.cleaned_data['otp']
+                stored_otp = request.session.get('otp')
+
+                if stored_otp and otpform == stored_otp:
+                    del request.session['otp']
+                    request.session['otp_verified'] = True
+                    request.session.set_expiry(7 * 60)  # Reset expiry for next step
+                    return redirect("forgetPassword")
+                messages.error(request, "Invalid OTP. Please try again.")
+            messages.error(request, "Invalid OTP format. Please try again.")
+        
+        elif 'new_password' in request.POST and 'otp_verified' in request.session:
+            form = SetNewPasswordForm(request.POST)
+            if form.is_valid():
+                new_password = form.cleaned_data['new_password']
+                email = request.session.get('forgot_email')
+                try:
+                    user = CustomUser.objects.get(email=email)
+                    user.set_password(new_password)
+                    user.save()
+                    request.session.flush()  # Clear session completely after reset
+                    messages.success(request, "Your password has been reset successfully. Please log in.")
+                    return redirect("login")
+                except CustomUser.DoesNotExist:
+                    messages.error(request, "User not found. Please try again.")
+            messages.error(request, "Invalid password. Please try again.")
+
+    if 'forgot_email' not in request.session:
+        form = ForgetPasswordForm()
+    elif 'otp_verified' not in request.session:
+        form = OTPVerificationForm()
+    else:
+        form = SetNewPasswordForm()
+
+    return render(request, "forgetPassword.html", {"form": form})
+

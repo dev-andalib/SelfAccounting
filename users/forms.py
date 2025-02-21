@@ -45,3 +45,35 @@ class OTPVerificationForm(forms.Form):
         if not otp.isdigit() or len(otp) != 6:
             raise forms.ValidationError("Invalid OTP. Please enter a 6-digit number.")
         return otp
+
+
+
+
+class ForgetPasswordForm(forms.Form):
+    email = forms.EmailField (
+        label="Enter the email associated with your account",
+        widget=forms.EmailInput(attrs={"class": "form-control", "placeholder": "Enter your email"}))
+    
+
+
+
+
+class SetNewPasswordForm(forms.Form):
+    new_password = forms.CharField(
+        label="New Password",
+        widget=forms.PasswordInput(attrs={"class": "form-control", "placeholder": "Enter new password"}),
+    )
+    confirm_password = forms.CharField(
+        label="Confirm Password",
+        widget=forms.PasswordInput(attrs={"class": "form-control", "placeholder": "Re-enter new password"}),
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get("new_password")
+        confirm_password = cleaned_data.get("confirm_password")
+
+        if password and confirm_password and password != confirm_password:
+            raise forms.ValidationError("Passwords do not match. Please try again.")
+
+        return cleaned_data
