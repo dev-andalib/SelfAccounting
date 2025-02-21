@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate
 
 
 def home(request):
-    return render(request, 'home.html', home)
+    return render(request, 'home.html')
 
 def login(request):
     if request.method == 'POST':
