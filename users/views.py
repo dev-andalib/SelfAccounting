@@ -6,7 +6,7 @@ from .models import CustomUser
 import random 
 from django.core.mail import send_mail
 from django.contrib import messages
-
+from django.contrib.auth.decorators import login_required
 
 
 
@@ -31,9 +31,10 @@ def send_otp_email(email, otp):
         print(f"Failed to send OTP: {e}")  # Debugging: Print error to console
 
 
-
-def home(request):
-    return render(request, 'home.html')
+@login_required
+def home(request, username):
+    user = CustomUser.objects.get(username= username)
+    return render(request, 'home.html', {"user":user})
 
 def login(request):
     if request.method == 'POST':
@@ -44,7 +45,7 @@ def login(request):
             
 
             if authenticate(username = username, password = password) != None:
-                return redirect(home) 
+                return redirect(home, username) 
             
             else:
                 form.add_error(None, 'Invalid login credentials')
@@ -105,8 +106,7 @@ def signup(request):
 
 
 
-from django.utils.timezone import now
-from datetime import timedelta
+
 
 def forgetPassword(request):
     if request.method == "POST":

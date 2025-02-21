@@ -6,6 +6,40 @@
     <title>Home</title>
 </head>
 <body>
-    this is home
+    <div class="container-fluid mt-4">
+        <div class="row">
+            
+            <!-- Left Section (25%) - User Details -->
+            <div class="col-md-3 bg-light p-3">
+                <h4>User Details</h4>
+                <hr>
+                <p><strong>Username:</strong> {{ user.username }}</p>
+                <p><strong>Last Name:</strong> {{ user.first_name }}</p>
+                <p><strong>First Name:</strong> {{ user.last_name }}</p>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>Employee Type:</strong> {{ user.role }}</p>
+            </div>
+    
+            <!-- Middle Section (60%) - Main Content -->
+            <div class="col-md-6 p-3">
+                <h2 class="text-center">Dashboard</h2>
+                <hr>
+                <p>Welcome to your dashboard. Here you can view and manage your projects, inventory, and account details.</p>
+            </div>
+    
+            <!-- Right Section (15%) - Menu Options -->
+            <div class="col-md-3 bg-light p-3">
+                <h4>Menu</h4>
+                <hr>
+                <ul class="list-group">
+                    <li class="list-group-item"><a href="{% url 'viewstatement' %}">View Statements</a></li>
+                    <li class="list-group-item"><a href="{% url 'viewallproject' %}">View Projects</a></li>
+                    <li class="list-group-item"><a href="{% url 'view_inv' %}">View Inventory</a></li>
+                    <li class="list-group-item"><a href="{% url 'Taccount' %}">View Account Details</a></li>
+                </ul>
+            </div>
+    
+        </div>
+    </div>
 </body>
 </html>
