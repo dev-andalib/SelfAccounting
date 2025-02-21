@@ -38,3 +38,18 @@ def Taccount(request):
 
     account_type_form = CustomAccountTypeForm()
     return render(request, 'acctype.html', {'account_type_form': account_type_form})
+
+
+@login_required
+def viewstatement(request):
+    return render(request, 'viewstatement.html')
+
+
+@login_required
+def viewallproject(request):
+    return render(request, 'viewallproject.html')
+
+
+@login_required
+def view_inv(request):
+    return render(request, 'view_inv.html')
