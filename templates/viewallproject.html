@@ -1,56 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>View All Projects</title>
 </head>
 <body>
-    <div class="container mt-4">
-        <h2 class="text-center">All Projects</h2>
-    
-        <table class="table table-bordered table-striped">
-            <thead class="thead-dark">
-                <tr>
-                    <th>Serial</th>
-                    <th>Project Name</th>
-                    <th>Description</th>
-                    <th>Client</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Added By</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for project in projects %}
-                <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>{{ project.name }}</td>
-                    <td>{{ project.description }}</td>
-                    <td>{{ project.client }}</td>
-                    <td>{{ project.start_date|date:"Y-m-d H:i" }}</td>
-                    <td>
-                        {% if project.end_date %}
-                            {{ project.end_date|date:"Y-m-d H:i" }}
-                        {% else %}
-                            Ongoing
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if project.added_by %}
-                            {{ project.added_by.username }}
-                        {% else %}
-                            Unknown
-                        {% endif %}
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="7" class="text-center">No projects available.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+    <h1>Projects</h1>
+    <pre>{{ projects|pprint }}</pre>  <!-- Debug: Display raw context data -->
 </body>
 </html>

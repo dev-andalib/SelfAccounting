@@ -7,7 +7,7 @@ from .models import Project
 
 @login_required
 def viewallproject(request):
-    projects = Project.objects.get()
+    projects = Project.objects.all()
     return render(request, 'viewallproject.html', {"projects" : projects})
 
 
