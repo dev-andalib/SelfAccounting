@@ -1,6 +1,16 @@
 from django.shortcuts import render, redirect
 from .froms import CustomAccountTypeForm, CustomProjectForm, CustomTransactionForm
 from django.contrib.auth.decorators import login_required
+from .models import Project
+
+
+
+@login_required
+def viewallproject(request):
+    projects = Project.objects.get()
+    return render(request, 'viewallproject.html', {"projects" : projects})
+
+
 
 @login_required
 def createProject(request):
@@ -8,12 +18,12 @@ def createProject(request):
         form = CustomProjectForm(request.POST)
         if form.is_valid():
             form.save() 
-            
-            return redirect("enterTran")
-    
+            return redirect("enterTran") 
     project_form = CustomProjectForm()
-
     return render(request, "projectcreate.html", {'project_form':project_form})
+
+
+
 
 @login_required
 def enterTran(request):
@@ -21,11 +31,11 @@ def enterTran(request):
         form = CustomTransactionForm(request.POST)
         if form.is_valid():
             form.save() 
-             
-            return redirect("enterTran")
-        
+            return redirect("enterTran")   
     transaction_form = CustomTransactionForm()
     return render(request, 'projectdetails.html', {'transaction_form': transaction_form})
+
+
 
 @login_required
 def Taccount(request):
