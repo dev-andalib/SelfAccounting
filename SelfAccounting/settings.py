@@ -31,13 +31,6 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
-# Redirect users to home page after successful login
-LOGIN_REDIRECT_URL = '/'  
-
-# Redirect users to the login page after logout
-LOGOUT_REDIRECT_URL = '/auth/login/'
-
-
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -149,3 +142,9 @@ EMAIL_PORT = 587  # Port for TLS
 EMAIL_USE_TLS = True  # Use TLS for secure connection
 EMAIL_HOST_USER = 'andalibiftakher138@gmail.com'  # Your email address
 EMAIL_HOST_PASSWORD = 'ziud gwjq gndd nheu'  # Your email password or app-specific password
+
+
+#login / logout issue
+
+LOGIN_REDIRECT_URL = '/redirect-after-login/'
+LOGIN_URL = '/'

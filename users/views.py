@@ -1,13 +1,13 @@
 from django.shortcuts import render, redirect
 from .forms import CustomUserCreationForm, OTPVerificationForm, ForgetPasswordForm, SetNewPasswordForm
 from django.contrib.auth.forms import  AuthenticationForm
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, logout, login
 from .models import CustomUser
 import random 
 from django.core.mail import send_mail
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-
+from django.urls import reverse
 
 
 
@@ -16,7 +16,6 @@ def generate_otp():
 
 
 
-from django.core.mail import send_mail
 
 def send_otp_email(email, otp):
     subject = "Your Signup OTP"
@@ -32,29 +31,34 @@ def send_otp_email(email, otp):
 
 
 @login_required
-def home(request, username):
+def home(request, username=None):
     user = CustomUser.objects.get(username= username)
     return render(request, 'home.html', {"user":user})
 
-def login(request):
-    if request.method == 'POST':
-        form = AuthenticationForm(request, data = request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            
 
-            if authenticate(username = username, password = password) != None:
-                return redirect(home, username) 
-            
-            else:
-                form.add_error(None, 'Invalid login credentials')
-                
+def login_user(request):
+    if request.user.is_authenticated:  # Keep user logged in
+        return redirect(reverse('home', kwargs={'username': request.user.username}))
+
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()  # Get authenticated user directly from the form
+            login(request, user)
+            return redirect(reverse('home', kwargs={'username': user.username}))  # Redirect after login
+
         else:
-            form.add_error(None, 'Please correct the errors below')        
+            form.add_error(None, 'Invalid login credentials')  # Show error if authentication fails
+
     else:
         form = AuthenticationForm()
+
     return render(request, 'registration/login.html', {"form": form})
+
+@login_required
+def login_redirect_view(request):
+    return redirect(reverse('home', kwargs={'username': request.user.username}))
+
 
 
 
@@ -161,3 +165,9 @@ def forgetPassword(request):
 
     return render(request, "forgetPassword.html", {"form": form})
 
+
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('login') 
