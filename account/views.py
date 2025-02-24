@@ -5,6 +5,7 @@ from .models import Project
 
 
 
+
 @login_required
 def viewallproject(request):
     projects = Project.objects.all()  
@@ -59,3 +60,8 @@ def viewstatement(request):
 @login_required
 def view_inv(request):
     return render(request, 'view_inv.html')
+
+
+
+
+

@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import CustomUserCreationForm, OTPVerificationForm, ForgetPasswordForm, SetNewPasswordForm
+from .forms import CustomUserCreationForm, OTPVerificationForm, ForgetPasswordForm, SetNewPasswordForm, EditAccountForm
 from django.contrib.auth.forms import  AuthenticationForm
 from django.contrib.auth import authenticate, logout, login
 from .models import CustomUser
@@ -54,6 +54,9 @@ def login_user(request):
         form = AuthenticationForm()
 
     return render(request, 'registration/login.html', {"form": form})
+
+
+
 
 @login_required
 def login_redirect_view(request):
@@ -171,3 +174,29 @@ def forgetPassword(request):
 def logout_view(request):
     logout(request)
     return redirect('login') 
+
+
+@login_required
+def editAcc(request):
+    return render(request, 'editAcc.html')
+
+
+
+
+
+
+@login_required
+def editAcc(request):
+    # Ensure the logged-in user is editing their own account
+    user = request.user
+
+    if request.method == 'POST':
+        form = EditAccountForm(request.POST, instance=user)  # Pass the logged-in user instance
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your username has been updated.")
+            return redirect('home')  # Or any redirect path you prefer
+    else:
+        form = EditAccountForm(instance=user)  # Pre-populate the form with the logged-in user's data
+
+    return render(request, 'editAcc.html', {'form': form, 'user': user})

@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import CustomUser
 
 
@@ -77,3 +77,25 @@ class SetNewPasswordForm(forms.Form):
             raise forms.ValidationError("Passwords do not match. Please try again.")
 
         return cleaned_data
+
+
+
+
+class EditAccountForm(UserChangeForm):
+    # Define fields to be editable
+    first_name = forms.CharField(max_length=30, required=True)
+    last_name = forms.CharField(max_length=30, required=True)
+    role = forms.ChoiceField(choices=[('accountant', 'Accountant')])  # Add more roles if needed
+
+    # Don't include the email field for editing
+    email = forms.EmailField(required=False, widget=forms.HiddenInput(), disabled=True)
+
+    class Meta:
+        model = CustomUser
+        fields = ['first_name', 'last_name', 'role']  # Only include fields you want to edit
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        if commit:
+            user.save()
+        return user
