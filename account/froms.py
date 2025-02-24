@@ -32,3 +32,8 @@ class CustomTransactionForm(forms.ModelForm):
             'amount': forms.NumberInput(attrs={'step': '0.01', 'min': '0'}),
             'description': forms.Textarea(attrs={'rows': 2, 'placeholder': 'Transaction details...'}),
         }
+
+
+
+
+
