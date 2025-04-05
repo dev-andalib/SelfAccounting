@@ -1,7 +1,6 @@
 
 #Setting up Virtual ENV and Activating it
 python -m venv venv
-venv\Scripts\activate
 pip install django
 
 
