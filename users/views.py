@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from .forms import CustomUserCreationForm, OTPVerificationForm, ForgetPasswordForm, SetNewPasswordForm, EditAccountForm
 from django.contrib.auth.forms import  AuthenticationForm
-from django.contrib.auth import authenticate, logout, login
+from django.contrib.auth import  logout, login
 from .models import CustomUser
 import random 
 from django.core.mail import send_mail
@@ -97,7 +97,7 @@ def otpverification(request):
 
 def signup(request):
     if request.method == "POST":
-        form = CustomUserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)       
         if form.is_valid():
             otp = generate_otp()
             email = form.cleaned_data['email']
@@ -105,8 +105,12 @@ def signup(request):
             request.session['otp'] = otp
             request.session['signup_form_data'] = request.POST
             return redirect("otpverification")
+        if request.method == "POST" and not form.is_valid():
+            print(form.errors)
+            
     else:
         form = CustomUserCreationForm()
+        
 
     return render(request, "registration/signup.html", {"form": form})
 

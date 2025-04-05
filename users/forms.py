@@ -17,7 +17,6 @@ class CustomUserCreationForm(UserCreationForm):
         fields = ['username', 'first_name', 'last_name', 'email', 'role', 'password1', 'password2']
 
     def clean_email(self):
-        """Ensure email is unique and meets custom validation criteria."""
         email = self.cleaned_data.get('email')
         if CustomUser.objects.filter(email=email).exists():
             raise forms.ValidationError("A user with this email already exists.")
