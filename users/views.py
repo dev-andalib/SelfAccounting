@@ -191,16 +191,16 @@ def editAcc(request):
 
 @login_required
 def editAcc(request):
-    # Ensure the logged-in user is editing their own account
+
     user = request.user
 
     if request.method == 'POST':
-        form = EditAccountForm(request.POST, instance=user)  # Pass the logged-in user instance
+        form = EditAccountForm(request.POST, instance=user)  
         if form.is_valid():
             form.save()
             messages.success(request, "Your username has been updated.")
-            return redirect('home')  # Or any redirect path you prefer
+            return redirect('home')  
     else:
-        form = EditAccountForm(instance=user)  # Pre-populate the form with the logged-in user's data
+        form = EditAccountForm(instance=user)  
 
     return render(request, 'editAcc.html', {'form': form, 'user': user})

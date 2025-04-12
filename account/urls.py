@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import createProject, enterTran, Taccount, viewstatement, viewallproject, view_inv
+from .views import createProject, enterTran, Taccount, viewstatement, viewallproject
 
 urlpatterns = [
     path('createproject/', createProject, name = 'createProject'),
@@ -7,5 +7,4 @@ urlpatterns = [
     path('acctype/', Taccount, name='Taccount'),
     path("viewstatement/", viewstatement, name="viewstatement"),
     path("viewallproject/", viewallproject, name="viewallproject"),
-    path("view_inv/", view_inv, name="view_inv"),
 ]
