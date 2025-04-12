@@ -1,81 +1,89 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            padding: 10px;
-            border: 1px solid #ccc;
-            text-align: left;
-        }
-        img {
-            width: 100px;
-            height: auto;
-        }
-        .pagination {
-            margin-top: 20px;
-            text-align: center;
-        }
-    </style>
-</head>
-<body>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
     <h1>Inventory List</h1>
+    <a href="{% url 'add_product' %}" class="btn" style="padding: 8px 12px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">
+        ➕ Add New Item
+    </a>
+</div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Image</th>
-                <th>Product Name</th>
-                <th>Category</th>
-                <th>Type</th>
-                <th>Description</th>
-                <th>Location</th>
-                <th>Stock</th>
-                <th>Price</th>
-                <th>Date Added</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for product in data %}
-            <tr>
-                <td><img src="{{ product.picture.url }}" alt="{{ product.prod_name }}"></td>
-                <td>{{ product.prod_name }}</td>
-                <td>{{ product.prod_category }}</td>
-                <td>{{ product.prod_type }}</td>
-                <td>{{ product.desc }}</td>
-                <td>{{ product.usage_location|default:"Not specified" }}</td>
-                <td>{{ product.stock }}</td>
-                <td>${{ product.price }}</td>
-                <td>{{ product.date_added }}</td>
-                <td><a href="{% url 'edit_product' product.id %}">Edit</a></td>
-            </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="9">No products available.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<form method="GET">
+    <label for="usage_location">Select Usage Location:</label>
+    <select name="usage_location" id="usage_location">
+        <option value="">All Locations</option>
+        {% for location in usage_locations %}
+            <option value="{{ location }}" {% if location == request.GET.usage_location %}selected{% endif %}>{{ location|title }}</option>
+        {% endfor %}
+    </select>
 
-    <div class="pagination">
-        <span class="step-links">
-            {% if data.has_previous %}
-                <a href="?page=1">&laquo; First</a>
-                <a href="?page={{ data.previous_page_number }}">Previous</a>
-            {% endif %}
-            <span class="current">Page {{ data.number }} of {{ data.paginator.num_pages }}</span>
-            {% if data.has_next %}
-                <a href="?page={{ data.next_page_number }}">Next</a>
-                <a href="?page={{ data.paginator.num_pages }}">Last &raquo;</a>
-            {% endif %}
+    <label for="prod_category">Select Product Category:</label>
+    <select name="prod_category" id="prod_category">
+        <option value="">All Categories</option>
+        {% for category in categories %}
+            <option value="{{ category }}" {% if category == request.GET.prod_category %}selected{% endif %}>{{ category|title }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="prod_type">Select Product Type:</label>
+    <select name="prod_type" id="prod_type">
+        <option value="">All Types</option>
+        {% for type in types %}
+            <option value="{{ type }}" {% if type == request.GET.prod_type %}selected{% endif %}>{{ type|title }}</option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Filter</button>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Product Name</th>
+            <th>Category</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Location</th>
+            <th>Stock</th>
+            <th>Price</th>
+            <th>Date Added</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for data in data %}
+        <tr>
+            <td><img src="{{ data.picture.url }}" width="80" alt="{{ data.prod_name }}"></td>
+            <td>{{ data.prod_name }}</td>
+            <td>{{ data.prod_category }}</td>
+            <td>{{ data.prod_type }}</td>
+            <td>{{ data.desc }}</td>
+            <td>{{ data.usage_location|default:"Not specified" }}</td>
+            <td>{{ data.stock }}</td>
+            <td>${{ data.price }}</td>
+            <td>{{ data.date_added }}</td>
+            <td><a href="{% url 'edit_product' data.id %}">Edit / Delete</a></td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="10">No products found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if data.has_previous %}
+            <a href="?page=1">&laquo; First</a>
+            <a href="?page={{ data.previous_page_number }}">Previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ data.number }} of {{ data.paginator.num_pages }}
         </span>
-    </div>
-</body>
-</html>
+
+        {% if data.has_next %}
+            <a href="?page={{ data.next_page_number }}">Next</a>
+            <a href="?page={{ data.paginator.num_pages }}">Last &raquo;</a>
+        {% endif %}
+    </span>
+</div>

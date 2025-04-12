@@ -1,0 +1,9 @@
+<h2>Add New Inventory Item</h2>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" style="background-color: #4CAF50; color: white; padding: 8px 16px;">Add Product</button>
+</form>
+
+<p><a href="{% url 'view_inventory' %}">← Back to Inventory</a></p>
