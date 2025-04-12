@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 # Set the custom user model
 AUTH_USER_MODEL = 'users.CustomUser'
 
@@ -149,3 +150,9 @@ EMAIL_HOST_PASSWORD = 'qxcc kjun oybt cths'  # Your email password or app-specif
 
 LOGIN_REDIRECT_URL = '/redirect-after-login/'
 LOGIN_URL = '/'
+
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
